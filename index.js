@@ -3,7 +3,15 @@
 const EventEmitter = require('events');
 const fs = require('fs')
 const path = require('path')
+const date = require('./helpers/date')
 
+
+console.log(date.dateCreater())
+
+console.log(Intl.DateTimeFormat('sv-SE').format(new Date))
+
+console.log(new Date())
+// console.log(Date.now())
 
 // class MyEmitter extends EventEmitter { };
 

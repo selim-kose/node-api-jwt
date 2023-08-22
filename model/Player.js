@@ -9,18 +9,18 @@ const playerSchema = new mongoose.Schema({
    },
    position: {
       type: String,
-      required: true,
+     // required: true,
       min: 6,
       max: 255
    },
    age: {
       type: Number,
       required: true,
-      min: 6,
-      max: 30
+      min: 1,
+      max: 40
    },
    date: {
-      type: Date,
+      type: String,
       default: Date.now()
    }
 

@@ -2,6 +2,8 @@ const router = require('express').Router();
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const User = require('../model/User')
+const cookieParser = require('cookie-parser')
+const {createToken} = require('../controllers/auth')
 
 
 router.get('/', async (req, res) => {
@@ -27,9 +29,14 @@ router.post('/register', async (req, res) => {
       password: hashedPassword
    })
 
+   //Save user to DB
    const user = await User.create(newUser)
 
-   res.json(user)
+   //Create JWT and cookie
+   const token = createToken(user._id)
+   res.cookie("jwt", token, {httpOnly: true, maxAge: 1000 * 60 * 5})
+
+   res.json(user.email)
 })
 
 
@@ -41,12 +48,14 @@ router.post('/login', async (req, res) => {
    //Check if inputed password matches with password in DB
    const correctPassword = await bcrypt.compare(req.body.password, userInDB.password)
    if (!correctPassword) return res.status(400).send('Wrong password')
-   const jwtAccessToken = jwt.sign({ _id: userInDB._id }, process.env.SECRET, { expiresIn: '5m' })
+   const token = createToken(userInDB._id)
 
    // TODO implement refreshtoken
    // const jwtRefreshToken = jwt.sign({ _id: userInDB._id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '1d' })
 
-   res.header({ jwtAccessToken }).json(jwtAccessToken)
+   res.cookie( "jwt", token, {httpOnly:true})
+   res.send('Logged in succesfully')
+   //res.header({ jwtAccessToken }).json(jwtAccessToken)
 
 })
 
